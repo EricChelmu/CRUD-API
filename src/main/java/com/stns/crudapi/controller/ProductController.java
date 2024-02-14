@@ -10,26 +10,13 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 public class ProductController {
 
     @Autowired
     private ProductService service;
-    @Autowired
-    private CategoryRepository categoryRepository;
-    @Autowired
-    private ProductRepository productRepository;
-
-    @PostMapping("/category/add")
-    public Category placeInCategory(@RequestBody CategoryRequest request){
-        return categoryRepository.save(request.getCategory());
-    }
-
-    @GetMapping("/category/all")
-    public List<Category> findAllCategories(){
-        return categoryRepository.findAll();
-    }
 
     @PostMapping("/product")
     public Product addProduct(@RequestBody Product product){
@@ -47,7 +34,7 @@ public class ProductController {
     }
 
     @GetMapping("/product/{id}")
-    public Product findProductById(@PathVariable int id){
+    public Object findProductById(@PathVariable int id){
         return service.getProductById(id);
     }
 

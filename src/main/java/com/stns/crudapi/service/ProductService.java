@@ -5,10 +5,13 @@ import com.stns.crudapi.repository.ProductRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @Service
 public class ProductService {
+
     @Autowired
     private ProductRepository repository;
 
@@ -24,8 +27,23 @@ public class ProductService {
         return repository.findAll();
     }
 
-    public Product getProductById(int id){
-        return repository.findById(id).orElse(null);
+    public Object getProductById(int id){
+        Product product = repository.findById(id).orElse(null);
+        if (product != null) {
+            return product;
+        } else {
+            // If no product is found, create a placeholder product or handle the case accordingly
+            return createNotFoundJsonMessage(id);
+        }
+    }
+
+    private Map<String, String> createNotFoundJsonMessage(int id) {
+        Map<String, String> jsonMessage = new HashMap<>();
+        jsonMessage.put("error", "Product not found");
+        jsonMessage.put("id", String.valueOf(id));
+        // Add more properties as needed
+
+        return jsonMessage;
     }
 
     public Product getProductByName(String name){
@@ -34,7 +52,7 @@ public class ProductService {
 
     public String deleteProduct(int id){
         repository.deleteById(id);
-        return "product removed !! "+id;
+        return "product removed!! "+id;
     }
 
     public Product updateProduct(Product product){

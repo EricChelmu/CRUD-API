@@ -1,8 +1,15 @@
 package com.stns.crudapi.repository;
 
+import com.stns.crudapi.dto.OrderResponse;
 import com.stns.crudapi.entity.Category;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 
+import java.util.List;
+
 public interface CategoryRepository extends JpaRepository<Category,Integer> {
+
+    @Query("SELECT new com.stns.crudapi.dto.OrderResponse(c.name, p.name, p.quantity, p.price) " +
+            "FROM Category c JOIN c.products p")
+    public List<OrderResponse> getJoinInformation();
 }
