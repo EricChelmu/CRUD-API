@@ -1,6 +1,7 @@
 package com.stns.crudapi.controller;
 
 import com.stns.crudapi.dto.CategoryRequest;
+import com.stns.crudapi.dto.OrderResponse;
 import com.stns.crudapi.entity.Category;
 import com.stns.crudapi.entity.Product;
 import com.stns.crudapi.repository.CategoryRepository;
@@ -17,6 +18,8 @@ public class ProductController {
 
     @Autowired
     private ProductService service;
+    @Autowired
+    private CategoryRepository categoryRepository;
 
     @PostMapping("/product")
     public Product addProduct(@RequestBody Product product){
@@ -29,8 +32,8 @@ public class ProductController {
     }
 
     @GetMapping("/product/all")
-    public List<Product> findAllProducts(){
-        return service.getProducts();
+    public List<OrderResponse> getJoinInformation() {
+        return categoryRepository.getJoinInformation();
     }
 
     @GetMapping("/product/{id}")

@@ -15,8 +15,8 @@ import lombok.ToString;
 @JsonInclude(JsonInclude.Include.NON_DEFAULT)
 public class OrderResponse {
 
-    private String categoryName;
-    private String productName;
+    private String category;
+    private String product;
     private int quantity;
     private double price;
 }

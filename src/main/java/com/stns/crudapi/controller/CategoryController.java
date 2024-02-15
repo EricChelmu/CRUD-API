@@ -20,7 +20,7 @@ public class CategoryController {
     @Autowired
     private ProductRepository productRepository;
 
-    @PostMapping("/category/add")
+    @PostMapping("/category")
     public Category placeInCategory(@RequestBody CategoryRequest request){
         return categoryRepository.save(request.getCategory());
     }
@@ -28,10 +28,5 @@ public class CategoryController {
     @GetMapping("/category/all")
     public List<Category> findAllCategories(){
         return categoryRepository.findAll();
-    }
-
-    @GetMapping("/category/info")
-    public List<OrderResponse> getJoinInformation(){
-        return categoryRepository.getJoinInformation();
     }
 }
