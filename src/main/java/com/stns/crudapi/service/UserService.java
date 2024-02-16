@@ -5,6 +5,7 @@ import com.stns.crudapi.entity.User;
 import com.stns.crudapi.exception.UserNotFoundException;
 import com.stns.crudapi.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -15,10 +16,15 @@ public class UserService {
     @Autowired
     private UserRepository userRepository;
 
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
     public User saveUser(UserRequest userRequest){
         User user = User.build(0, userRequest.getName(), userRequest.getEmail(),
-                userRequest.getMobile(), userRequest.getGender(), userRequest.getAge(),
-                userRequest.getNationality());
+                userRequest.getPassword(), userRequest.getMobile(),
+                userRequest.getGender(), userRequest.getAge(),
+                userRequest.getNationality(),userRequest.getRoles());
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
         return userRepository.save(user);
     }
 

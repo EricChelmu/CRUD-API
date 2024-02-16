@@ -8,6 +8,7 @@ import com.stns.crudapi.repository.CategoryRepository;
 import com.stns.crudapi.repository.ProductRepository;
 import com.stns.crudapi.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
@@ -22,21 +23,25 @@ public class ProductController {
     private CategoryRepository categoryRepository;
 
     @PostMapping("/product")
+    @PreAuthorize("hasAuthority('admin')")
     public Product addProduct(@RequestBody Product product){
         return service.saveProduct(product);
     }
 
     @PostMapping("/product/all")
+    @PreAuthorize("hasAuthority('admin')")
     public List<Product> addProducts(@RequestBody List<Product> products){
         return service.saveProducts(products);
     }
 
     @GetMapping("/product/all")
+    @PreAuthorize("hasAuthority('user')")
     public List<OrderResponse> getJoinInformation() {
         return categoryRepository.getJoinInformation();
     }
 
     @GetMapping("/product/{id}")
+    @PreAuthorize("hasAuthority('user')")
     public Object findProductById(@PathVariable int id){
         return service.getProductById(id);
     }
@@ -47,11 +52,13 @@ public class ProductController {
     }
 
     @PutMapping("/product")
+    @PreAuthorize("hasAuthority('admin')")
     public Product updateProduct(@RequestBody Product product){
         return service.updateProduct(product);
     }
 
     @DeleteMapping("/product/{id}")
+    @PreAuthorize("hasAuthority('admin')")
     public String deleteProduct(@PathVariable int id){
         return service.deleteProduct(id);
     }

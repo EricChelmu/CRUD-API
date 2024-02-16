@@ -14,6 +14,8 @@ public class UserRequest {
     private String name;
     @Email
     private String email;
+    @NotBlank
+    private String password;
     @NotNull
     @Pattern(regexp = "^\\d{10}$", message = "invalid mobile number entered")
     private String mobile;
@@ -23,4 +25,6 @@ public class UserRequest {
     private int age;
     @NotBlank
     private String nationality;
+    @NotBlank
+    private String roles;
 }
