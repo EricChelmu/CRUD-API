@@ -23,25 +23,25 @@ public class ProductController {
     private CategoryRepository categoryRepository;
 
     @PostMapping("/product")
-    @PreAuthorize("hasAuthority('admin')")
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     public Product addProduct(@RequestBody Product product){
         return service.saveProduct(product);
     }
 
     @PostMapping("/product/all")
-    @PreAuthorize("hasAuthority('admin')")
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     public List<Product> addProducts(@RequestBody List<Product> products){
         return service.saveProducts(products);
     }
 
     @GetMapping("/product/all")
-    @PreAuthorize("hasAuthority('user')")
+    //@PreAuthorize("hasAuthority('ROLE_USER')")
     public List<OrderResponse> getJoinInformation() {
         return categoryRepository.getJoinInformation();
     }
 
     @GetMapping("/product/{id}")
-    @PreAuthorize("hasAuthority('user')")
+    //@PreAuthorize("hasAuthority('ROLE_USER')")
     public Object findProductById(@PathVariable int id){
         return service.getProductById(id);
     }
@@ -52,14 +52,15 @@ public class ProductController {
     }
 
     @PutMapping("/product")
-    @PreAuthorize("hasAuthority('admin')")
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     public Product updateProduct(@RequestBody Product product){
         return service.updateProduct(product);
     }
 
     @DeleteMapping("/product/{id}")
-    @PreAuthorize("hasAuthority('admin')")
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     public String deleteProduct(@PathVariable int id){
         return service.deleteProduct(id);
     }
+
 }

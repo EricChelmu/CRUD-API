@@ -6,6 +6,7 @@ import com.stns.crudapi.entity.Category;
 import com.stns.crudapi.repository.CategoryRepository;
 import com.stns.crudapi.repository.ProductRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -21,6 +22,7 @@ public class CategoryController {
     private ProductRepository productRepository;
 
     @PostMapping("/category")
+    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
     public Category placeInCategory(@RequestBody CategoryRequest request){
         return categoryRepository.save(request.getCategory());
     }
