@@ -41,10 +41,10 @@ public class ProductService {
         Map<String, String> jsonMessage = new HashMap<>();
         jsonMessage.put("error", "Product not found");
         jsonMessage.put("id", String.valueOf(id));
-        // Add more properties as needed
-
         return jsonMessage;
     }
+
+
 
     public Product getProductByName(String name){
         return repository.findByName(name);
