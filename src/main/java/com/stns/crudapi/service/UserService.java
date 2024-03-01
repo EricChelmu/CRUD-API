@@ -21,9 +21,7 @@ public class UserService {
 
     public User saveUser(UserRequest userRequest){
         User user = User.build(0, userRequest.getName(), userRequest.getEmail(),
-                userRequest.getPassword(), userRequest.getMobile(),
-                userRequest.getGender(), userRequest.getAge(),
-                userRequest.getNationality(),userRequest.getRoles());
+                userRequest.getPassword(), userRequest.getRoles());
         user.setPassword(passwordEncoder.encode(user.getPassword()));
         return userRepository.save(user);
     }

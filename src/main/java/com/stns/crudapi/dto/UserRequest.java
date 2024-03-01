@@ -16,15 +16,6 @@ public class UserRequest {
     private String email;
     @NotBlank
     private String password;
-    @NotNull
-    @Pattern(regexp = "^\\d{10}$", message = "invalid mobile number entered")
-    private String mobile;
-    private String gender;
-    @Min(18)
-    @Max(120)
-    private int age;
-    @NotBlank
-    private String nationality;
     @NotBlank
     private String roles;
 }

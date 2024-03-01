@@ -22,7 +22,7 @@ public class CategoryController {
     private ProductRepository productRepository;
 
     @PostMapping("/category")
-    @PreAuthorize("hasAuthority('ROLE_ADMIN')")
+    @PreAuthorize("hasAuthority('admin')")
     public Category placeInCategory(@RequestBody CategoryRequest request){
         return categoryRepository.save(request.getCategory());
     }
