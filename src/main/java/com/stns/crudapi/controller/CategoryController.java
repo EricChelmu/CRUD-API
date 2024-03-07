@@ -6,7 +6,10 @@ import com.stns.crudapi.entity.Category;
 import com.stns.crudapi.repository.CategoryRepository;
 import com.stns.crudapi.repository.ProductRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -23,8 +26,17 @@ public class CategoryController {
 
     @PostMapping("/category")
     @PreAuthorize("hasAuthority('admin')")
-    public Category placeInCategory(@RequestBody CategoryRequest request){
-        return categoryRepository.save(request.getCategory());
+    public ResponseEntity<?> placeInCategory(@RequestBody @Validated CategoryRequest request){
+        try {
+            if (categoryRepository.existsByName(request.getCategory().getName())) {
+                return ResponseEntity.status(HttpStatus.CONFLICT)
+                        .body("Category with the same name already exists");
+            }
+        Category savedCategory = categoryRepository.save(request.getCategory());
+        return ResponseEntity.status(HttpStatus.CREATED).body(savedCategory);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY).build();
+        }
     }
 
     @GetMapping("/category/all")

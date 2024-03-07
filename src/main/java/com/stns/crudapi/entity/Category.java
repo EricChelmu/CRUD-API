@@ -11,14 +11,14 @@ import java.util.List;
 @AllArgsConstructor
 @NoArgsConstructor
 @Entity
-@Table(name = "category")
+@Table(uniqueConstraints = {@UniqueConstraint(columnNames = "name", name = "unique_category_name")})
 public class Category {
 
     @Id
     @GeneratedValue
-    private int cId;
+    private int id;
     private String name;
     @OneToMany(targetEntity = Product.class,cascade = CascadeType.ALL)
-    @JoinColumn(name = "category_id",referencedColumnName = "cId")
+    @JoinColumn(name = "category_id",referencedColumnName = "id")
     private List<Product> products;
 }

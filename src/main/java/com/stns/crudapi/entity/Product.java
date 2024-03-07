@@ -4,6 +4,7 @@ import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
+import jakarta.validation.constraints.Min;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -16,9 +17,12 @@ import lombok.NoArgsConstructor;
 public class Product {
 
     @Id
+    @GeneratedValue
     private int id;
     private String name;
+    @Min(value = 0, message = "Quantity cannot be negative")
     private int quantity;
+    @Min(value = 0, message = "Price cannot be negative")
     private double price;
 
 }
