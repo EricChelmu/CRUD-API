@@ -16,7 +16,8 @@ import lombok.ToString;
 public class OrderResponse {
 
     private String category;
-    private String product;
+    private String name;
     private int quantity;
     private double price;
+
 }

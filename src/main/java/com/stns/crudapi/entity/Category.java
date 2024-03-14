@@ -1,5 +1,8 @@
 package com.stns.crudapi.entity;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import lombok.AllArgsConstructor;
@@ -22,5 +25,6 @@ public class Category {
     private String name;
     @OneToMany(targetEntity = Product.class,cascade = CascadeType.ALL)
     @JoinColumn(name = "category_id",referencedColumnName = "id")
+    @JsonManagedReference
     private List<Product> products;
 }

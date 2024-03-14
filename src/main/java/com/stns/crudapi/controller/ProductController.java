@@ -1,19 +1,18 @@
 package com.stns.crudapi.controller;
 
-import com.stns.crudapi.dto.CategoryRequest;
 import com.stns.crudapi.dto.OrderResponse;
-import com.stns.crudapi.entity.Category;
 import com.stns.crudapi.entity.Product;
 import com.stns.crudapi.repository.CategoryRepository;
-import com.stns.crudapi.repository.ProductRepository;
 import com.stns.crudapi.service.ProductService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 
 import java.util.List;
-import java.util.Map;
 
 @RestController
 @Validated
@@ -37,13 +36,17 @@ public class ProductController {
     }
 
     @GetMapping("/product/all")
-    //@PreAuthorize("hasAuthority('user')")
-    public List<OrderResponse> getJoinInformation() {
-        return categoryRepository.getJoinInformation();
+    public Page<OrderResponse> getJoinInformation(@RequestParam(defaultValue = "1") int page,
+                                                  @RequestParam(defaultValue = "12") int size) {
+        // Adjust the page number to start from 0-based index
+        int adjustedPage = page - 1;
+
+        // Create PageRequest with adjusted page number
+        Pageable pageable = PageRequest.of(adjustedPage, size);
+        return categoryRepository.getJoinInformation(pageable);
     }
 
     @GetMapping("/product/{id}")
-    //@PreAuthorize("hasAuthority('user')")
     public Object findProductById(@PathVariable int id){
         return service.getProductById(id);
     }
