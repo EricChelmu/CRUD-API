@@ -19,5 +19,6 @@ public class OrderResponse {
     private String name;
     private int quantity;
     private double price;
+    private int id;
 
 }
