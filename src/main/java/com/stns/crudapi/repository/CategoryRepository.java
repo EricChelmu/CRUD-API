@@ -14,7 +14,7 @@ public interface CategoryRepository extends JpaRepository<Category,Integer> {
 
     @Query("SELECT new com.stns.crudapi.dto.OrderResponse(c.name, p.name, p.quantity, p.price, p.id) " +
             "FROM Category c JOIN c.products p")
-    public Page<OrderResponse> getJoinInformation(Pageable pageable);
+    public List<OrderResponse> getJoinInformation();
 
     Optional<Category> findByName(String name);
 
