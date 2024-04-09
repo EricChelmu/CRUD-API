@@ -27,4 +27,8 @@ public class Category {
     @JoinColumn(name = "category_id",referencedColumnName = "id")
     @JsonManagedReference
     private List<Product> products;
+
+    public Category(String name) {
+        this.name = name;
+    }
 }

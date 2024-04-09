@@ -38,10 +38,9 @@ public class ProductController {
     @GetMapping("/product/all")
     public Page<OrderResponse> getJoinInformation(@RequestParam(defaultValue = "1") int page,
                                                   @RequestParam(defaultValue = "12") int size) {
-        // Adjust the page number to start from 0-based index
+
         int adjustedPage = page - 1;
 
-        // Create PageRequest with adjusted page number
         Pageable pageable = PageRequest.of(adjustedPage, size);
         return categoryRepository.getJoinInformation(pageable);
     }

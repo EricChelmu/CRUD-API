@@ -34,4 +34,11 @@ public class Product {
     @JsonBackReference
     private Category category;
 
+    public Product(String name, int quantity, double price, Category category) {
+        this.name = name;
+        this.quantity = quantity;
+        this.price = price;
+        this.category = category;
+    }
+
 }
