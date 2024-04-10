@@ -59,6 +59,12 @@ public class ProductService {
         }
     }
 
+    public List<Product> searchProductsByName(String name){
+        // Use repository method to search products by name
+        List<Product> products = repository.findByNameContainingIgnoreCase(name);
+        return products;
+    }
+
     public Product updateProduct(Product product){
         Product existingProduct = repository.findById(product.getId()).orElse(null);
         existingProduct.setName(product.getName());

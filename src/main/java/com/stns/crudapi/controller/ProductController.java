@@ -55,6 +55,11 @@ public class ProductController {
         return service.getProductByName(name);
     }
 
+    @GetMapping("/product/search")
+    public List<Product> searchProductsByName(@RequestParam String name){
+        return service.searchProductsByName(name);
+    }
+
     @PutMapping("/product")
     @PreAuthorize("hasAuthority('admin')")
     public Product updateProduct(@RequestBody Product product){
