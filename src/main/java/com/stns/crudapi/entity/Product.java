@@ -2,6 +2,7 @@ package com.stns.crudapi.entity;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.Min;
@@ -35,6 +36,7 @@ public class Product {
     private Category category;
     @OneToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "image_id")
+    @JsonIgnore
     private Image image;
 
     public Product(String name, int quantity, double price, Category category) {

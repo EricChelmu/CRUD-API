@@ -26,7 +26,7 @@ public class ImageService {
         Image image = imageRepository.save(Image.builder()
                 .name(file.getOriginalFilename())
                 .type(file.getContentType())
-                .filePath(filePath).build());
+                .path(filePath).build());
 
         file.transferTo(new File(filePath));
 
@@ -39,7 +39,7 @@ public class ImageService {
 
     public byte[] downloadImageFromFileSystem(String fileName) throws IOException {
         Optional<Image> fileData = imageRepository.findByName(fileName);
-        String filePath = fileData.get().getFilePath();
+        String filePath = fileData.get().getPath();
         byte[] images = Files.readAllBytes(new File(filePath).toPath());
         return images;
     }

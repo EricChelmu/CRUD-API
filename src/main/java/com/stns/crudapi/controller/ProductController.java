@@ -1,5 +1,6 @@
 package com.stns.crudapi.controller;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.stns.crudapi.dto.OrderResponse;
 import com.stns.crudapi.entity.Product;
 import com.stns.crudapi.repository.CategoryRepository;
@@ -34,14 +35,23 @@ public class ProductController {
 
     @PostMapping("/product")
     @PreAuthorize("hasAuthority('admin')")
-    public ResponseEntity<?> addProduct(@RequestBody Product product, @RequestParam("image")MultipartFile file){
+    public ResponseEntity<?> addProduct(@RequestParam("jsonData") String jsonData,
+                                        @RequestPart("image")MultipartFile image){
         try {
-            Product savedProduct = service.saveProductWithImage(product, file);
+            Product product = convertJsonToProduct(jsonData);
+
+            Product savedProduct = service.saveProductWithImage(product, image);
+
             return ResponseEntity.ok(savedProduct);
         } catch (IOException e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body
                     ("Failed to save product with image: " + e.getMessage());
         }
+    }
+
+    private Product convertJsonToProduct(String jsonData) throws IOException {
+        ObjectMapper objectMapper = new ObjectMapper();
+        return objectMapper.readValue(jsonData, Product.class);
     }
 
     @PostMapping("/product/all")

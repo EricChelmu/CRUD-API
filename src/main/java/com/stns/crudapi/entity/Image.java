@@ -1,5 +1,6 @@
 package com.stns.crudapi.entity;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
@@ -20,7 +21,8 @@ public class Image {
 
     private String name;
     private String type;
-    private String filePath;
+    private String path;
     @OneToOne(mappedBy = "image")
+    @JsonIgnore
     private Product product;
 }

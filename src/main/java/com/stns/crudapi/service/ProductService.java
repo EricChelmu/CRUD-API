@@ -45,8 +45,9 @@ public class ProductService {
     public Product saveProductWithImage(Product product, MultipartFile file) throws IOException {
 
 
-        // Save the image and associate it with the saved product
+
         Image image = saveImage(file);
+
         product.setImage(image);
 
         return repository.save(product);
@@ -63,8 +64,19 @@ public class ProductService {
         orderResponse.setQuantity(product.getQuantity());
         orderResponse.setPrice(product.getPrice());
 
-        // Set the image path in the DTO
-        orderResponse.setImagePath(product.getImage().getFilePath());
+        if (product.getImage() != null) {
+            orderResponse.setImagePath(product.getImage().getPath());
+        } else {
+            // Assign a default image that already exists in the database
+            Image defaultImage = imageRepository.findById(2)
+                    .orElseThrow(() -> new EntityNotFoundException("Default Image not found"));
+
+            // Update the product's image with the default image
+            product.setImage(defaultImage);
+            repository.save(product);
+
+            orderResponse.setImagePath(defaultImage.getPath());
+        }
 
         return orderResponse;
     }
@@ -79,9 +91,9 @@ public class ProductService {
         Image image = new Image();
         image.setName(fileName);
         image.setType(file.getContentType());
-        image.setFilePath(filePath);
+        image.setPath(filePath);
 
-        return image;
+        return imageRepository.save(image);
     }
 
     public List<Product> saveProducts(List<Product> products){
