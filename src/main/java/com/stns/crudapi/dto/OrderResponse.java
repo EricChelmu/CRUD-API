@@ -20,5 +20,6 @@ public class OrderResponse {
     private int quantity;
     private double price;
     private int id;
+    private String imagePath;
 
 }

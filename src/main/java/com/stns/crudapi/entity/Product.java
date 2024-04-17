@@ -33,6 +33,9 @@ public class Product {
     @JsonIgnoreProperties("products")
     @JsonBackReference
     private Category category;
+    @OneToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "image_id")
+    private Image image;
 
     public Product(String name, int quantity, double price, Category category) {
         this.name = name;

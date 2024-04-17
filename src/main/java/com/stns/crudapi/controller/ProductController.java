@@ -4,15 +4,24 @@ import com.stns.crudapi.dto.OrderResponse;
 import com.stns.crudapi.entity.Product;
 import com.stns.crudapi.repository.CategoryRepository;
 import com.stns.crudapi.service.ProductService;
+import jakarta.persistence.EntityNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
+import java.util.UUID;
 
 @RestController
 @Validated
@@ -25,13 +34,19 @@ public class ProductController {
 
     @PostMapping("/product")
     @PreAuthorize("hasAuthority('admin')")
-    public Product addProduct(@RequestBody Product product){
-        return service.saveProduct(product);
+    public ResponseEntity<?> addProduct(@RequestBody Product product, @RequestParam("image")MultipartFile file){
+        try {
+            Product savedProduct = service.saveProductWithImage(product, file);
+            return ResponseEntity.ok(savedProduct);
+        } catch (IOException e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body
+                    ("Failed to save product with image: " + e.getMessage());
+        }
     }
 
     @PostMapping("/product/all")
     @PreAuthorize("hasAuthority('admin')")
-    public List<Product> addProducts(@RequestBody List<Product> products){
+    public List<Product> addProducts(@RequestBody List<Product> products) {
         return service.saveProducts(products);
     }
 
@@ -46,8 +61,13 @@ public class ProductController {
     }
 
     @GetMapping("/product/{id}")
-    public Object findProductById(@PathVariable int id){
-        return service.getProductById(id);
+    public ResponseEntity<?> findProductById(@PathVariable int id){
+        try {
+            OrderResponse productWithImage = service.getProductByIdWithImage(id);
+            return ResponseEntity.ok(productWithImage);
+        } catch (EntityNotFoundException e) {
+            return ResponseEntity.status(HttpStatus.NOT_FOUND).body("Product not found: " + e.getMessage());
+        }
     }
 
     @GetMapping("/productByName/{name}")
@@ -70,6 +90,17 @@ public class ProductController {
     @PreAuthorize("hasAuthority('admin')")
     public String deleteProduct(@PathVariable int id){
         return service.deleteProduct(id);
+    }
+
+    @PutMapping("/product/{productId}/image/{imageId}")
+    @PreAuthorize("hasAuthority('admin')")
+    public ResponseEntity<?> assignImageToProduct(@PathVariable int productId, @PathVariable int imageId) {
+        try {
+            Product updatedProduct = service.assignImageToProduct(productId, imageId);
+            return ResponseEntity.ok(updatedProduct);
+        } catch (Exception e) {
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body("Failed to assign image to product: " + e.getMessage());
+        }
     }
 
 }

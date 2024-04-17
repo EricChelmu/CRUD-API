@@ -38,7 +38,7 @@ public class SecurityConfig {
         return http.csrf(AbstractHttpConfigurer::disable)
                 .authorizeHttpRequests(auth->{
                     auth.requestMatchers("/product/all","/users/sign-up","users/authenticate",
-                            "/category/all", "/product/search")
+                            "/category/all", "/product/search", "/image", "/image/**", "/product/**")
                             .permitAll()
                             .requestMatchers("/product/**").authenticated()
                             .requestMatchers("/category/**").authenticated();

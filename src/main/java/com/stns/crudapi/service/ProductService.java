@@ -1,10 +1,24 @@
 package com.stns.crudapi.service;
 
+import com.stns.crudapi.dto.OrderResponse;
+import com.stns.crudapi.entity.Image;
 import com.stns.crudapi.entity.Product;
+import com.stns.crudapi.repository.ImageRepository;
 import com.stns.crudapi.repository.ProductRepository;
+import jakarta.persistence.EntityManager;
+import jakarta.persistence.EntityNotFoundException;
+import jakarta.persistence.PersistenceContext;
+import jakarta.persistence.Query;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
+import org.springframework.util.StringUtils;
+import org.springframework.web.multipart.MultipartFile;
 
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Paths;
+import java.nio.file.StandardCopyOption;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -15,8 +29,59 @@ public class ProductService {
     @Autowired
     private ProductRepository repository;
 
+    @Autowired
+    private ImageRepository imageRepository;
+
+    @PersistenceContext
+    private EntityManager entityManager;
+
+    @Value("${image.baseDir}")
+    private String baseDir;
+
     public Product saveProduct(Product product){
         return repository.save(product);
+    }
+
+    public Product saveProductWithImage(Product product, MultipartFile file) throws IOException {
+
+
+        // Save the image and associate it with the saved product
+        Image image = saveImage(file);
+        product.setImage(image);
+
+        return repository.save(product);
+    }
+
+    public OrderResponse getProductByIdWithImage(int id) {
+        Product product = repository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Product not found"));
+
+        OrderResponse orderResponse = new OrderResponse();
+        orderResponse.setId(product.getId());
+        orderResponse.setName(product.getName());
+        orderResponse.setCategory(product.getCategory().getName());
+        orderResponse.setQuantity(product.getQuantity());
+        orderResponse.setPrice(product.getPrice());
+
+        // Set the image path in the DTO
+        orderResponse.setImagePath(product.getImage().getFilePath());
+
+        return orderResponse;
+    }
+
+    private Image saveImage(MultipartFile file) throws IOException {
+        String fileName = StringUtils.cleanPath(file.getOriginalFilename());
+        String filePath = Paths.get(baseDir, fileName).toString();
+        Files.copy(file.getInputStream(), Paths.get(filePath), StandardCopyOption.REPLACE_EXISTING);
+
+        // Instead of directly saving the image to the repository,
+        // create an Image entity and return it for further processing
+        Image image = new Image();
+        image.setName(fileName);
+        image.setType(file.getContentType());
+        image.setFilePath(filePath);
+
+        return image;
     }
 
     public List<Product> saveProducts(List<Product> products){
@@ -44,8 +109,6 @@ public class ProductService {
         return jsonMessage;
     }
 
-
-
     public Product getProductByName(String name){
         return repository.findByName(name);
     }
@@ -59,10 +122,12 @@ public class ProductService {
         }
     }
 
-    public List<Product> searchProductsByName(String name){
-        // Use repository method to search products by name
-        List<Product> products = repository.findByNameContainingIgnoreCase(name);
-        return products;
+    public List<Product> searchProductsByName(String name) {
+        String queryString = "SELECT p FROM Product p WHERE LOWER(p.name) LIKE LOWER(:name)";
+        Query query = entityManager.createQuery(queryString, Product.class);
+        query.setParameter("name", "%" + name + "%");
+
+        return query.getResultList();
     }
 
     public Product updateProduct(Product product){
@@ -71,5 +136,16 @@ public class ProductService {
         existingProduct.setQuantity(product.getQuantity());
         existingProduct.setPrice(product.getPrice());
         return repository.save(existingProduct);
+    }
+
+    public Product assignImageToProduct(int productId, int imageId) {
+        Product product = repository.findById(productId)
+                .orElseThrow(() -> new EntityNotFoundException("Product not found"));
+
+        Image image = imageRepository.findById(imageId)
+                .orElseThrow(() -> new EntityNotFoundException("Image not found"));
+
+        product.setImage(image);
+        return repository.save(product);
     }
 }
