@@ -2,6 +2,7 @@ package com.stns.crudapi.controller;
 
 import com.stns.crudapi.service.ImageService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
@@ -9,6 +10,9 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
 
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 
 
 @RestController
@@ -26,11 +30,11 @@ public class ImageController {
                 .body(uploadFile);
     }
 
-    @GetMapping("/{fileName}")
-    public ResponseEntity<?> downloadImage(@PathVariable String fileName) throws IOException {
-        byte[] fileData = imageService.downloadImageFromFileSystem(fileName);
+    @GetMapping("/{imageName}")
+    public ResponseEntity<?> downloadImage(@PathVariable String imageName) throws IOException {
+        byte[] imageData = imageService.downloadImageFromFileSystem(imageName);
         return ResponseEntity.status(HttpStatus.OK)
                 .contentType(MediaType.valueOf("image/png"))
-                .body(fileData);
+                .body(imageData);
     }
 }

@@ -21,6 +21,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.UUID;
 
@@ -86,8 +87,15 @@ public class ProductController {
     }
 
     @GetMapping("/product/search")
-    public List<Product> searchProductsByName(@RequestParam String name){
-        return service.searchProductsByName(name);
+    public List<OrderResponse> searchProductsByName(@RequestParam String name) {
+        List<OrderResponse> orderResponses = service.searchProductsByName(name);
+
+        // If no results are found, return an empty list
+        if (orderResponses == null) {
+            return new ArrayList<>();
+        }
+
+        return orderResponses;
     }
 
     @PutMapping("/product")

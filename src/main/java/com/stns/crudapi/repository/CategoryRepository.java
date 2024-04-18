@@ -12,9 +12,9 @@ import java.util.Optional;
 
 public interface CategoryRepository extends JpaRepository<Category,Integer> {
 
-    @Query("SELECT new com.stns.crudapi.dto.OrderResponse(c.name, p.name, p.quantity, p.price, p.id," +
-            " i.path) " +
-            "FROM Category c JOIN c.products p LEFT JOIN p.image i")
+    @Query("SELECT NEW com.stns.crudapi.dto.OrderResponse(c.name, p.name, p.quantity, p.price, p.id, " +
+            "COALESCE(p.image.path, '')) " +
+            "FROM Category c JOIN c.products p LEFT JOIN p.image")
     public Page<OrderResponse> getJoinInformation(Pageable pageable);
 
     Optional<Category> findByName(String name);

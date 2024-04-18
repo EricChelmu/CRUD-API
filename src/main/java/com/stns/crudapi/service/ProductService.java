@@ -19,6 +19,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -134,13 +135,23 @@ public class ProductService {
         }
     }
 
-    public List<Product> searchProductsByName(String name) {
-        String queryString = "SELECT p FROM Product p WHERE LOWER(p.name) LIKE LOWER(:name)";
-        Query query = entityManager.createQuery(queryString, Product.class);
+    public List<OrderResponse> searchProductsByName(String name) {
+        String queryString = "SELECT NEW com.stns.crudapi.dto.OrderResponse(c.name, p.name, p.quantity, p.price, p.id, COALESCE(p.image.path, '')) " +
+                "FROM Product p LEFT JOIN p.category c LEFT JOIN p.image i WHERE LOWER(p.name) LIKE LOWER(:name)";
+        Query query = entityManager.createQuery(queryString);
         query.setParameter("name", "%" + name + "%");
 
-        return query.getResultList();
+        List<OrderResponse> orderResponses = query.getResultList();
+
+        // If no results are found, create an empty list to return
+        if (orderResponses == null) {
+            return new ArrayList<>();
+        }
+
+        return orderResponses;
     }
+
+
 
     public Product updateProduct(Product product){
         Product existingProduct = repository.findById(product.getId()).orElse(null);
