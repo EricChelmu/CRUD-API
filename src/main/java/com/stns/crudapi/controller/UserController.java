@@ -55,11 +55,20 @@ public class UserController {
 
         if (authentication.isAuthenticated()) {
             String token = jwtService.generateToken(authRequest.getUsername());
+            String refreshToken = jwtService.generateRefreshToken(authRequest.getUsername());
             String message = "Authentication successful";
-            AuthenticationResponse response = new AuthenticationResponse(token, message);
+            AuthenticationResponse response = new AuthenticationResponse(token, refreshToken, message);
             return ResponseEntity.ok(response);
         } else {
             throw new UsernameNotFoundException("Invalid user request!");
         }
+    }
+
+    @PostMapping("/refresh-token")
+    public ResponseEntity<AuthenticationResponse> refreshToken(@RequestBody String refreshToken) {
+        String token = jwtService.refreshToken(refreshToken);
+        String message = "Token refreshed successfully";
+        AuthenticationResponse response = new AuthenticationResponse(token, refreshToken, message);
+        return ResponseEntity.ok(response);
     }
 }
