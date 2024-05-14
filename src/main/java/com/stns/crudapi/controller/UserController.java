@@ -14,10 +14,14 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.security.core.GrantedAuthority;
 
+import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/users")
@@ -32,6 +36,9 @@ public class UserController {
 
     @Autowired
     private AuthenticationManager authenticationManager;
+
+    @Autowired
+    private UserService userService;
 
     @PostMapping("/sign-up")
     public ResponseEntity<User> saveUser(@RequestBody @Valid UserRequest userRequest){
@@ -54,10 +61,15 @@ public class UserController {
                 new UsernamePasswordAuthenticationToken(authRequest.getUsername(), authRequest.getPassword()));
 
         if (authentication.isAuthenticated()) {
+            UserDetails userDetails = (UserDetails) authentication.getPrincipal();
+            List<String> roles = userDetails.getAuthorities().stream()
+                    .map(GrantedAuthority::getAuthority)
+                    .collect(Collectors.toList());
+
             String token = jwtService.generateToken(authRequest.getUsername());
             String refreshToken = jwtService.generateRefreshToken(authRequest.getUsername());
             String message = "Authentication successful";
-            AuthenticationResponse response = new AuthenticationResponse(token, refreshToken, message);
+            AuthenticationResponse response = new AuthenticationResponse(token, refreshToken, message, roles);
             return ResponseEntity.ok(response);
         } else {
             throw new UsernameNotFoundException("Invalid user request!");
@@ -66,9 +78,20 @@ public class UserController {
 
     @PostMapping("/refresh-token")
     public ResponseEntity<AuthenticationResponse> refreshToken(@RequestBody String refreshToken) {
-        String token = jwtService.refreshToken(refreshToken);
+        // Retrieve user information associated with the refresh token
+        String username = jwtService.getUsernameFromRefreshToken(refreshToken);
+        User user = userService.getUserByName(username);
+
+        // Retrieve roles of the user
+        List<String> roles = Arrays.asList(user.getRoles().split(","));
+
+        // Generate a new access token
+        String newToken = jwtService.refreshToken(username);
+
+        // Prepare the response
         String message = "Token refreshed successfully";
-        AuthenticationResponse response = new AuthenticationResponse(token, refreshToken, message);
+        AuthenticationResponse response = new AuthenticationResponse(newToken, refreshToken, message, roles);
+
         return ResponseEntity.ok(response);
     }
 }

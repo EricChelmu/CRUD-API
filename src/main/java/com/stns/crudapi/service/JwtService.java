@@ -1,14 +1,19 @@
 package com.stns.crudapi.service;
 
+import com.stns.crudapi.entity.User;
+import com.stns.crudapi.repository.UserRepository;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoder;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Component;
+import org.springframework.security.core.userdetails.UserDetailsService;
 
 import java.security.Key;
 import java.util.Date;
@@ -21,6 +26,9 @@ public class JwtService {
 
     @Value("${jwt.secret}")
     private String secret;
+
+    @Autowired
+    private UserRepository userRepository;
 
     public String extractUsername(String token){
         return extractClaim(token, Claims::getSubject);
@@ -81,5 +89,14 @@ public class JwtService {
     private Key getSignKey() {
         byte[] keyBytes = Decoders.BASE64.decode(secret);
         return Keys.hmacShaKeyFor(keyBytes);
+    }
+
+    public String getUsernameFromRefreshToken(String refreshToken) {
+        return extractUsername(refreshToken);
+    }
+
+    public User getUserByName(String username) {
+        return userRepository.findByName(username)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found with username: " + username));
     }
 }

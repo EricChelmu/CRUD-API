@@ -5,6 +5,7 @@ import com.stns.crudapi.entity.User;
 import com.stns.crudapi.exception.UserNotFoundException;
 import com.stns.crudapi.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -37,5 +38,10 @@ public class UserService {
         }else{
             throw new UserNotFoundException("user not found with id: " + id);
         }
+    }
+
+    public User getUserByName(String username) throws UsernameNotFoundException {
+        return userRepository.findByName(username)
+                .orElseThrow(() -> new UsernameNotFoundException("User not found with username: " + username));
     }
 }

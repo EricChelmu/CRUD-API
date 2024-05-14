@@ -28,10 +28,17 @@ public class SecurityConfig {
     @Autowired
     private JwtAuthFilter authFilter;
 
+    @Autowired
+    public void setAuthFilter(JwtAuthFilter authFilter) {
+        this.authFilter = authFilter;
+    }
+
     @Bean
     public UserDetailsService userDetailsService(){
         return new UserInfoUserDetailsService();
     }
+
+
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
