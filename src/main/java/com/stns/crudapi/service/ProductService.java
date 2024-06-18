@@ -171,8 +171,4 @@ public class ProductService {
         product.setImage(image);
         return repository.save(product);
     }
-
-    public List<Product> filterProducts(Integer categoryId, Double minPrice, Double maxPrice) {
-        return repository.findByCategoryAndPriceRange(categoryId, minPrice, maxPrice);
-    }
 }

@@ -90,20 +90,12 @@ public class ProductController {
     public List<OrderResponse> searchProductsByName(@RequestParam String name) {
         List<OrderResponse> orderResponses = service.searchProductsByName(name);
 
+        // If no results are found, return an empty list
         if (orderResponses == null) {
             return new ArrayList<>();
         }
 
         return orderResponses;
-    }
-
-    @GetMapping("/product/filter")
-    public ResponseEntity<List<Product>> filterProducts(
-            @RequestParam(required = false) Integer categoryId,
-            @RequestParam(required = false) Double minPrice,
-            @RequestParam(required = false) Double maxPrice) {
-        List<Product> filteredProducts = service.filterProducts(categoryId, minPrice, maxPrice);
-        return ResponseEntity.ok(filteredProducts);
     }
 
     @PutMapping("/product")
