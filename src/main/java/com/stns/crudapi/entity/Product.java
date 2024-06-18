@@ -46,4 +46,8 @@ public class Product {
         this.category = category;
     }
 
+    public void setPrice(double price) {
+        this.price = Math.round(price * 100.0) / 100.0;
+    }
+
 }

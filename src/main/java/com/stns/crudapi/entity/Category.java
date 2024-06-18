@@ -21,8 +21,13 @@ public class Category {
     @Id
     @GeneratedValue
     private int id;
+
     @NotBlank
     private String name;
+
+    @NotBlank
+    private String description;
+
     @OneToMany(targetEntity = Product.class,cascade = CascadeType.ALL)
     @JoinColumn(name = "category_id",referencedColumnName = "id")
     @JsonManagedReference
